@@ -38,6 +38,32 @@ if selected_country_display != 'All':
     selected_country = selected_country_display.split('(')[-1].rstrip(')')
 
 
+
+
+
+# Filter based on country selection
+if selected_country and selected_country != 'All':
+    filtered_data_by_country = data[data['cntry'].str.lower() == selected_country.lower()]
+    institutions = sorted(filtered_data_by_country['inst_name'].unique())
+else:
+    institutions = all_institutions
+
+# Institution selection filter
+selected_institution = st.selectbox("Select Institution", options=['All'] + list(institutions))
+
+# Filter data based on institution and country selection
+filtered_data = data.copy()
+if selected_institution != 'All':
+    filtered_data = filtered_data[filtered_data['inst_name'] == selected_institution]
+if selected_country and selected_country != 'All':
+    filtered_data = filtered_data[filtered_data['cntry'].str.lower() == selected_country.lower()]
+
+# Author name search filter
+author_name = st.text_input("Search by Author Name (Partial or Full)")
+if author_name:
+    filtered_data = filtered_data[filtered_data['authfull'].str.contains(author_name, case=False, na=False)]
+
+
 # Author Distribution by Country
 st.subheader("Author Distribution by Country")
 if not filtered_data.empty:
@@ -65,28 +91,6 @@ else:
     st.write("No data to display.")
 
 
-
-# Filter based on country selection
-if selected_country and selected_country != 'All':
-    filtered_data_by_country = data[data['cntry'].str.lower() == selected_country.lower()]
-    institutions = sorted(filtered_data_by_country['inst_name'].unique())
-else:
-    institutions = all_institutions
-
-# Institution selection filter
-selected_institution = st.selectbox("Select Institution", options=['All'] + list(institutions))
-
-# Filter data based on institution and country selection
-filtered_data = data.copy()
-if selected_institution != 'All':
-    filtered_data = filtered_data[filtered_data['inst_name'] == selected_institution]
-if selected_country and selected_country != 'All':
-    filtered_data = filtered_data[filtered_data['cntry'].str.lower() == selected_country.lower()]
-
-# Author name search filter
-author_name = st.text_input("Search by Author Name (Partial or Full)")
-if author_name:
-    filtered_data = filtered_data[filtered_data['authfull'].str.contains(author_name, case=False, na=False)]
 
 # Show some basic statistics about the filtered data
 st.subheader("Statistics")
