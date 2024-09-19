@@ -32,6 +32,8 @@ def load_data_from_drive():
 # Load the data
 data = load_data_from_drive()
 
+# Set the title of the app
+st.title("Author Career and Publications Search App")
 
 
 # Step 1: Filter countries and institutions dynamically based on selection
