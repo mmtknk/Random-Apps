@@ -125,7 +125,7 @@ assert len(table_data["FIELD"]) == len(table_data["BASIS"]) == len(table_data["D
 # Create an expander to show the table information
 with st.expander("Show Table Information"):
     st.write("### Table Information")
-    st.dataframe(pd.DataFrame(table_data))
+    st.dataframe(pd.DataFrame(table_data), use_container_width=True)
 
 
 
