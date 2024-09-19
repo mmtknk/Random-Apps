@@ -190,6 +190,12 @@ correlation_data = correlation_data.dropna()
 # Calculate correlation
 correlation_matrix = correlation_data.corr()
 
+# Contact information
+st.write("---")
+st.write("Contact Information")
+st.write("**Dr. Mehmet Kanik**")
+st.write("[mmtkanik@gmail.com](mailto:mmtkanik@gmail.com)")
+
 # Plotting the heatmap
 fig, ax = plt.subplots(figsize=(6, 4))
 sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", ax=ax)  # Closing parenthesis here
