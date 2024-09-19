@@ -193,7 +193,7 @@ correlation_matrix = correlation_data.corr()
 
 # Plotting the heatmap
 fig, ax = plt.subplots(figsize=(6, 4))
-sns.heatmap(correlation_matrix
+sns.heatmap(correlation_matrix)
 
 
 # Contact information
