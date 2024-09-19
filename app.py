@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import pycountry
 import plotly.express as px
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # Generate a mapping of short codes to full country names using pycountry
 country_mapping = {country.alpha_3.lower(): country.name for country in pycountry.countries}
@@ -9,10 +11,7 @@ country_mapping = {country.alpha_3.lower(): country.name for country in pycountr
 # Function to load data from Google Drive using the direct download link
 @st.cache_data
 def load_data_from_drive():
-    # Use the correct Google Drive direct download link for the CSV file
     google_drive_csv_url = 'https://drive.google.com/uc?id=1Eyaz5WozXoqHu-6X82Dc5GlwHbI99-7g'
-
-    # Read the CSV data with UTF-8 encoding
     data = pd.read_csv(google_drive_csv_url, encoding='utf-8')  # Assuming the file is properly UTF-8 encoded
     
     # Handle NaN values by replacing them with 'Unknown' for the relevant columns
@@ -29,52 +28,34 @@ data = load_data_from_drive()
 st.title("Author Career and Publications Search App")
 
 # Step 1: Filter countries and institutions dynamically based on selection
-# Get the list of countries and institutions in the filtered data
 all_institutions = sorted(data['inst_name'].unique())
 all_countries = sorted([f"{country_mapping.get(code.lower(), code)} ({code})" for code in data['cntry'].unique()])
 
-# Filter based on country selection
+# Country selection filter
 selected_country_display = st.selectbox("Select Country", options=['All'] + all_countries)
 selected_country = None
 if selected_country_display != 'All':
     selected_country = selected_country_display.split('(')[-1].rstrip(')')
 
-# Filter the institutions based on the selected country
+# Filter based on country selection
 if selected_country and selected_country != 'All':
     filtered_data_by_country = data[data['cntry'].str.lower() == selected_country.lower()]
     institutions = sorted(filtered_data_by_country['inst_name'].unique())
 else:
     institutions = all_institutions
 
-# Step 2: Filter institutions dynamically based on country or institution selection
+# Institution selection filter
 selected_institution = st.selectbox("Select Institution", options=['All'] + list(institutions))
 
-# Filter based on institution selection
-if selected_institution != 'All':
-    filtered_data_by_institution = data[data['inst_name'] == selected_institution]
-    countries = sorted([f"{country_mapping.get(code.lower(), code)} ({code})" for code in filtered_data_by_institution['cntry'].unique()])
-else:
-    countries = all_countries
-
-# Now we dynamically update the countries list if an institution is selected
-if selected_institution != 'All':
-    selected_country_display = st.selectbox("Select Country (Filtered)", options=countries, index=0)
-
-# Step 3: Handle Author Name Search
-author_name = st.text_input("Search by Author Name (Partial or Full)")
-
-# Apply filters to the data
+# Filter data based on institution and country selection
 filtered_data = data.copy()
-
-# Apply Institution filter if selected
 if selected_institution != 'All':
     filtered_data = filtered_data[filtered_data['inst_name'] == selected_institution]
-
-# Apply Country filter if selected
 if selected_country and selected_country != 'All':
     filtered_data = filtered_data[filtered_data['cntry'].str.lower() == selected_country.lower()]
 
-# Apply Author Name filter if input is provided
+# Author name search filter
+author_name = st.text_input("Search by Author Name (Partial or Full)")
 if author_name:
     filtered_data = filtered_data[filtered_data['authfull'].str.contains(author_name, case=False, na=False)]
 
@@ -88,64 +69,128 @@ st.write(f"**Number of Authors:** {num_authors}")
 st.write(f"**Number of Institutions:** {num_institutions}")
 st.write(f"**Number of Countries:** {num_countries}")
 
-# Select only necessary columns to show
-columns_to_show = ['authfull', 'inst_name', 'rank (ns)', 'cntry']
-filtered_data = filtered_data[columns_to_show]
+# Top 5 Countries by Author Count
+top_countries = filtered_data['cntry'].value_counts().head(5)
+st.write("**Top 5 Countries by Author Count:**")
+for i, (country_code, count) in enumerate(top_countries.items(), 1):
+    country_name = country_mapping.get(country_code.lower(), country_code)
+    st.write(f"{i}. {country_name} ({count} authors)")
 
-# Display the filtered results
-st.write(f"Showing {len(filtered_data)} results")
-st.dataframe(filtered_data)
+# Top 5 Institutions by Author Count
+top_institutions = filtered_data['inst_name'].value_counts().head(5)
+st.write("**Top 5 Institutions by Author Count:**")
+for i, (inst_name, count) in enumerate(top_institutions.items(), 1):
+    st.write(f"{i}. {inst_name} ({count} authors)")
 
-# Create a choropleth map for country distribution
+# Author Distribution by Country
 st.subheader("Author Distribution by Country")
-
 if not filtered_data.empty:
-    # Use the short country code and count authors per country
     country_counts = filtered_data['cntry'].value_counts().reset_index()
     country_counts.columns = ['cntry', 'count']
-
-    # Ensure all country codes are uppercase for the ISO-3 format required by Plotly
     country_counts['cntry'] = country_counts['cntry'].str.upper()
-
-    # Filter out any country codes that are not valid ISO-3 codes
+    
     valid_iso3_codes = set([country.alpha_3 for country in pycountry.countries])
     country_counts = country_counts[country_counts['cntry'].isin(valid_iso3_codes)]
-
-    # Check if there is any valid data to display
+    
     if not country_counts.empty:
-        # Add full country names
         country_counts['country_name'] = country_counts['cntry'].apply(lambda x: country_mapping.get(x.lower(), x))
-
-        # Plot the map
-        fig = px.choropleth(country_counts,
-                            locations="cntry",
-                            color="count",
-                            hover_name="country_name",
-                            locationmode="ISO-3",
-                            color_continuous_scale="Viridis",
-                            labels={"count": "Number of Authors"})
-
-        st.plotly_chart(fig)
+        
+        fig_map = px.choropleth(country_counts,
+                                locations="cntry",
+                                color="count",
+                                hover_name="country_name",
+                                locationmode="ISO-3",
+                                color_continuous_scale="Viridis",
+                                labels={"count": "Number of Authors"})
+        st.plotly_chart(fig_map)
     else:
         st.write("No valid country data to display on the map.")
 else:
     st.write("No data to display.")
 
-# Additional visualization: Bar Chart of Top Institutions by Author Count
-st.subheader("Top Institutions by Author Count")
+# Visualization 1: Field Distribution
+if 'sm-field' in filtered_data.columns:
+    st.subheader("Field Distribution")
+    field_counts = filtered_data['sm-field'].value_counts().reset_index()
+    field_counts.columns = ['Field', 'Count']
+    
+    fig_field = px.bar(field_counts, x='Field', y='Count', 
+                       title='Field Distribution',
+                       labels={'Field': 'Field', 'Count': 'Number of Authors'})
+    st.plotly_chart(fig_field)
 
-# Count authors per institution
-institution_counts = filtered_data['inst_name'].value_counts().reset_index()
-institution_counts.columns = ['inst_name', 'count']
+# Visualization 2: Subfield Distribution
+if 'sm-subfield-1' in filtered_data.columns:
+    st.subheader("Subfield Distribution")
+    subfield_counts = filtered_data['sm-subfield-1'].value_counts().reset_index()
+    subfield_counts.columns = ['Subfield', 'Count']
+    
+    fig_subfield = px.bar(subfield_counts, x='Subfield', y='Count',
+                          title='Subfield Distribution',
+                          labels={'Subfield': 'Subfield', 'Count': 'Number of Authors'})
+    st.plotly_chart(fig_subfield)
 
-# Plot a bar chart
-fig_inst = px.bar(institution_counts.head(10), x='inst_name', y='count',
-                  labels={'inst_name': 'Institution', 'count': 'Number of Authors'},
-                  title='Top 10 Institutions by Author Count')
-st.plotly_chart(fig_inst)
+# Visualization 3: Subfield Fraction Distribution
+if 'sm-subfield-1-frac' in filtered_data.columns:
+    st.subheader("Subfield Fraction Distribution")
+    fig_subfield_frac = px.histogram(filtered_data, x='sm-subfield-1-frac',
+                                     title='Subfield Fraction Distribution',
+                                     labels={'sm-subfield-1-frac': 'Subfield 1 Fraction'},
+                                     nbins=20)
+    st.plotly_chart(fig_subfield_frac)
 
-# Add contact information at the bottom
-st.write("---")
-st.write("Contact Information")
-st.write("**Dr. Mehmet Kanik**")
-st.write("[mmtkanik@gmail.com](mailto:mmtkanik@gmail.com)")
+# Visualization 4: Rank Distribution by Subfield
+if 'rank sm-subfield-1' in filtered_data.columns:
+    # Ensure 'rank sm-subfield-1' is numeric
+    filtered_data['rank sm-subfield-1'] = pd.to_numeric(filtered_data['rank sm-subfield-1'], errors='coerce')
+    
+    st.subheader("Rank Distribution by Subfield")
+    rank_by_subfield = filtered_data.groupby('sm-subfield-1')['rank sm-subfield-1'].mean().reset_index()
+    rank_by_subfield.columns = ['Subfield', 'Average Rank']
+
+    fig_rank_subfield = px.bar(rank_by_subfield, x='Subfield', y='Average Rank',
+                               title='Average Rank by Subfield',
+                               labels={'Subfield': 'Subfield', 'Average Rank': 'Average Rank'})
+    
+    st.plotly_chart(fig_rank_subfield)
+
+# Visualization: Rank Distribution Histogram by Field
+if 'rank (ns)' in filtered_data.columns and 'sm-field' in filtered_data.columns:
+    # Ensure 'rank (ns)' is numeric
+    filtered_data['rank (ns)'] = pd.to_numeric(filtered_data['rank (ns)'], errors='coerce')
+    
+    st.subheader("Rank Distribution Histogram by Field")
+    
+    fig_rank_hist = px.histogram(filtered_data, x='rank (ns)', color='sm-field',
+                                 title='Rank Distribution by Field',
+                                 labels={'rank (ns)': 'Rank', 'sm-field': 'Field'},
+                                 nbins=20)
+    st.plotly_chart(fig_rank_hist)
+
+# Visualization: Rank Distribution by Field (Average)
+if 'rank (ns)' in filtered_data.columns and 'sm-field' in filtered_data.columns:
+    st.subheader("Rank Distribution by Field (Average Rank)")
+    
+    rank_by_field = filtered_data.groupby('sm-field')['rank (ns)'].mean().reset_index()
+    rank_by_field.columns = ['Field', 'Average Rank']
+    
+    fig_rank_field = px.bar(rank_by_field, x='Field', y='Average Rank',
+                            title='Average Rank by Field',
+                            labels={'Field': 'Field', 'Average Rank': 'Average Rank'})
+    
+    st.plotly_chart(fig_rank_field)
+
+# Correlation Heatmap between Ranks and Fields
+st.subheader("Correlation between Fields and Ranks")
+
+# Selecting relevant columns for correlation
+correlation_data = filtered_data[['rank (ns)', 'rank sm-subfield-1']]
+correlation_data = correlation_data.dropna()
+
+# Calculate correlation
+correlation_matrix = correlation_data.corr()
+
+# Plotting the heatmap
+fig, ax = plt.subplots(figsize=(6, 4))
+sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", ax=ax)  # Closing parenthesis here
+st.pyplot(fig)
