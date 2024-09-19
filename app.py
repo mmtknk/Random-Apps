@@ -9,11 +9,16 @@ import matplotlib.pyplot as plt
 country_mapping = {country.alpha_3.lower(): country.name for country in pycountry.countries}
 
 # Function to load data from Google Drive using the direct download link
-@st.cache_data  # Updated to st.cache_data
+@st.cache_data  # Use st.cache_data to cache the data loading process
 def load_data_from_drive():
     google_drive_csv_url = 'https://drive.google.com/uc?id=1Eyaz5WozXoqHu-6X82Dc5GlwHbI99-7g'
-    data = pd.read_csv(google_drive_csv_url, encoding='utf-8')  # Assuming the file is properly UTF-8 encoded
-    
+
+    try:
+        data = pd.read_csv(google_drive_csv_url, encoding='utf-8')
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame on error
+
     # Handle NaN values by replacing them with 'Unknown' for the relevant columns
     data['inst_name'] = data['inst_name'].fillna('Unknown')
     data['cntry'] = data['cntry'].fillna('Unknown')
