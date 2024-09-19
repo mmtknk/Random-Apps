@@ -24,9 +24,8 @@ def load_data_from_drive():
 # Load the data
 data = load_data_from_drive()
 
-# Display the title and description
+# Set the title of the app
 st.title("Author Career and Publications Search App")
-st.write("This app allows you to search author career data and publication history based on Stanford's 2022 data.")
 
 # Step 1: Filter countries and institutions dynamically based on selection
 all_institutions = sorted(data['inst_name'].unique())
@@ -69,6 +68,10 @@ num_countries = len(filtered_data['cntry'].unique())
 st.write(f"**Number of Authors:** {num_authors}")
 st.write(f"**Number of Institutions:** {num_institutions}")
 st.write(f"**Number of Countries:** {num_countries}")
+
+# Display the filtered results
+st.write(f"Showing {len(filtered_data)} results")
+st.write(filtered_data)
 
 # Top 5 Countries by Author Count
 top_countries = filtered_data['cntry'].value_counts().head(5)
@@ -190,7 +193,6 @@ correlation_data = correlation_data.dropna()
 
 # Calculate correlation
 correlation_matrix = correlation_data.corr()
-
 # Plotting the heatmap
 fig, ax = plt.subplots(figsize=(6, 4))
 sns.heatmap(correlation_matrix)
