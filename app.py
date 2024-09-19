@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 country_mapping = {country.alpha_3.lower(): country.name for country in pycountry.countries}
 
 # Function to load data from Google Drive using the direct download link
-@st.cache_data
+@st.cache_data  # Updated to st.cache_data
 def load_data_from_drive():
     google_drive_csv_url = 'https://drive.google.com/uc?id=1Eyaz5WozXoqHu-6X82Dc5GlwHbI99-7g'
     data = pd.read_csv(google_drive_csv_url, encoding='utf-8')  # Assuming the file is properly UTF-8 encoded
