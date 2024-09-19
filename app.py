@@ -37,25 +37,7 @@ st.title("Author Career and Publications Search App")
 
 
 
-# Define the table data
-table_data = {
-    "FIELD": ["authfull", "inst_name", "cntry", "np6023", "firstyr", "lastyr", "rank (ns)", "nc9623 (ns)", "h23 (ns)", "hm23 (ns)", "nps (ns)", "ncs (ns)", "cpsf (ns)", "ncsf (ns)", "npsfl (ns)", "ncsfl (ns)", "c (ns)", "npciting (ns)", "cprat (ns)", "np6023 cited9623 (ns)", "self%", "rank", "nc9623", "h23", "hm23", "nps", "ncs", "cpsf", "ncsf", "npsfl", "ncsfl", "c", "npciting", "cprat", "np6023 cited9623", "np6023_rw", "nc9623_to_rw", "nc9623_rw", "sm-subfield-1", "sm-subfield-1-frac", "sm-subfield-2", "sm-subfield-2-frac", "sm-field", "sm-field-frac", "rank sm-subfield-1", "rank sm-subfield-1 (ns)", "sm-subfield-1 count"],
-    "BASIS": ["", "", "", "", "", "", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "", "", "", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "self-citations excluded", ""],  
-    "DESCRIPTION": ["author name", "institution name (large institutions only)", "country associated with most recent institution", "# papers 1960-2023", "year of first publication", "year of most recent publication", "rank based on composite score c", "total cites 1996-2023", "h-index as of end-2023", "hm-index as of end-2023", "number of single authored papers", "total cites to single authored papers", "number of single+first authored papers", "total cites to single+first authored papers", "number of single+first+last authored papers", "total cites to single+first+last authored papers", "composite score", "number of distinct citing papers", "ratio of total citations to distinct citing papers", "number of papers 1960-2023 that have been cited at least once", "self-citation percentage", "rank based on composite score c", "total cites 1996-2023", "h-index as of end-2023", "hm-index as of end-2023", "number of single authored papers", "total cites to single authored papers", "number of single+first authored papers", "total cites to single+first authored papers", "number of single+first+last authored papers", "total cites to single+first+last authored papers", "composite score", "number of distinct citing papers", "ratio of total citations to distinct citing papers", "number of papers 1960-2023 that have been cited at least once", "# papers 1960-2023 marked as Retraction in RWDB", "total cites 1996-2023 to papers (by this author) marked as Retraction in RWDB", "total cites 1996-2023 from papers (by any author) marked as Retraction in RWDB", "top ranked Science-Metrix category (subfield) for author", "associated category fraction", "second ranked Science-Metrix category (subfield) for author", "associated category fraction", "top ranked higher-level Science-Metrix category (field) for author", "associated category fraction", "rank of c within category sm-subfield-1", "rank of c (ns) within category sm-subfield-1", "total number of authors within category sm-subfield-1"]
-}
 
-# Debugging lengths of each list
-st.write(f"LENGTH of FIELD: {len(table_data['FIELD'])}")
-st.write(f"LENGTH of BASIS: {len(table_data['BASIS'])}")
-st.write(f"LENGTH of DESCRIPTION: {len(table_data['DESCRIPTION'])}")
-
-# Ensure all lists in table_data have the same length
-assert len(table_data["FIELD"]) == len(table_data["BASIS"]) == len(table_data["DESCRIPTION"]), "All lists in table_data must have the same length"
-
-# Create an expander to show the table information
-with st.expander("Show Table Information"):
-    st.write("### Table Information")
-    st.dataframe(pd.DataFrame(table_data))
 
 
 
@@ -126,6 +108,28 @@ num_countries = len(filtered_data['cntry'].unique())
 st.write(f"**Number of Authors:** {num_authors}")
 st.write(f"**Number of Institutions:** {num_institutions}")
 st.write(f"**Number of Countries:** {num_countries}")
+
+
+
+
+# Define the table data
+table_data = {
+    "FIELD": ["authfull", "inst_name", "cntry", "np6023", "firstyr", "lastyr", "rank (ns)", "nc9623 (ns)", "h23 (ns)", "hm23 (ns)", "nps (ns)", "ncs (ns)", "cpsf (ns)", "ncsf (ns)", "npsfl (ns)", "ncsfl (ns)", "c (ns)", "npciting (ns)", "cprat (ns)", "np6023 cited9623 (ns)", "self%", "rank", "nc9623", "h23", "hm23", "nps", "ncs", "cpsf", "ncsf", "npsfl", "ncsfl", "c", "npciting", "cprat", "np6023 cited9623", "np6023_rw", "nc9623_to_rw", "nc9623_rw", "sm-subfield-1", "sm-subfield-1-frac", "sm-subfield-2", "sm-subfield-2-frac", "sm-field", "sm-field-frac", "rank sm-subfield-1", "rank sm-subfield-1 (ns)", "sm-subfield-1 count"],
+    "BASIS": ["", "", "", "", "", "", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "self-citations excluded", "", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "", "", "", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "all citations", "self-citations excluded", ""],  
+    "DESCRIPTION": ["author name", "institution name (large institutions only)", "country associated with most recent institution", "# papers 1960-2023", "year of first publication", "year of most recent publication", "rank based on composite score c", "total cites 1996-2023", "h-index as of end-2023", "hm-index as of end-2023", "number of single authored papers", "total cites to single authored papers", "number of single+first authored papers", "total cites to single+first authored papers", "number of single+first+last authored papers", "total cites to single+first+last authored papers", "composite score", "number of distinct citing papers", "ratio of total citations to distinct citing papers", "number of papers 1960-2023 that have been cited at least once", "self-citation percentage", "rank based on composite score c", "total cites 1996-2023", "h-index as of end-2023", "hm-index as of end-2023", "number of single authored papers", "total cites to single authored papers", "number of single+first authored papers", "total cites to single+first authored papers", "number of single+first+last authored papers", "total cites to single+first+last authored papers", "composite score", "number of distinct citing papers", "ratio of total citations to distinct citing papers", "number of papers 1960-2023 that have been cited at least once", "# papers 1960-2023 marked as Retraction in RWDB", "total cites 1996-2023 to papers (by this author) marked as Retraction in RWDB", "total cites 1996-2023 from papers (by any author) marked as Retraction in RWDB", "top ranked Science-Metrix category (subfield) for author", "associated category fraction", "second ranked Science-Metrix category (subfield) for author", "associated category fraction", "top ranked higher-level Science-Metrix category (field) for author", "associated category fraction", "rank of c within category sm-subfield-1", "rank of c (ns) within category sm-subfield-1", "total number of authors within category sm-subfield-1"]
+}
+
+# Ensure all lists in table_data have the same length
+assert len(table_data["FIELD"]) == len(table_data["BASIS"]) == len(table_data["DESCRIPTION"]), "All lists in table_data must have the same length"
+
+# Create an expander to show the table information
+with st.expander("Show Table Information"):
+    st.write("### Table Information")
+    st.dataframe(pd.DataFrame(table_data))
+
+
+
+
 
 # Display the filtered results
 st.write(f"Showing {len(filtered_data)} results")
