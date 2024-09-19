@@ -24,8 +24,9 @@ def load_data_from_drive():
 # Load the data
 data = load_data_from_drive()
 
-# Set the title of the app
+# Display the title and description
 st.title("Author Career and Publications Search App")
+st.write("This app allows you to search author career data and publication history based on Stanford's 2022 data.")
 
 # Step 1: Filter countries and institutions dynamically based on selection
 all_institutions = sorted(data['inst_name'].unique())
@@ -192,8 +193,8 @@ correlation_matrix = correlation_data.corr()
 
 # Plotting the heatmap
 fig, ax = plt.subplots(figsize=(6, 4))
-sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", ax=ax)  # Closing parenthesis here
-st.pyplot(fig)
+sns.heatmap(correlation_matrix
+
 
 # Contact information
 st.write("---")
