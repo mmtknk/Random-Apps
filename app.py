@@ -5,6 +5,9 @@ import plotly.express as px
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+# Set page configuration to wide mode
+st.set_page_config(layout="wide", page_title="Author Career and Publications Search App")
+
 # Generate a mapping of short codes to full country names using pycountry
 country_mapping = {country.alpha_3.lower(): country.name for country in pycountry.countries}
 
@@ -29,8 +32,7 @@ def load_data_from_drive():
 # Load the data
 data = load_data_from_drive()
 
-# Set the title of the app
-st.title("Author Career and Publications Search App")
+
 
 # Step 1: Filter countries and institutions dynamically based on selection
 all_institutions = sorted(data['inst_name'].unique())
