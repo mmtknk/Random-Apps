@@ -43,12 +43,10 @@ table_data = {
     "DESCRIPTION": ["author name", "institution name (large institutions only)", "country associated with most recent institution", "# papers 1960-2023", "year of first publication", "year of most recent publication", "rank based on composite score c", "total cites 1996-2023", "h-index as of end-2023", "hm-index as of end-2023", "number of single authored papers", "total cites to single authored papers", "number of single+first authored papers", "total cites to single+first authored papers", "number of single+first+last authored papers", "total cites to single+first+last authored papers", "composite score", "number of distinct citing papers", "ratio of total citations to distinct citing papers", "number of papers 1960-2023 that have been cited at least once", "self-citation percentage", "rank based on composite score c", "total cites 1996-2023", "h-index as of end-2023", "hm-index as of end-2023", "number of single authored papers", "total cites to single authored papers", "number of single+first authored papers", "total cites to single+first authored papers", "number of single+first+last authored papers", "total cites to single+first+last authored papers", "composite score", "number of distinct citing papers", "ratio of total citations to distinct citing papers", "number of papers 1960-2023 that have been cited at least once", "# papers 1960-2023 marked as Retraction in RWDB", "total cites 1996-2023 to papers (by this author) marked as Retraction in RWDB", "total cites 1996-2023 from papers (by any author) marked as Retraction in RWDB", "top ranked Science-Metrix category (subfield) for author", "associated category fraction", "second ranked Science-Metrix category (subfield) for author", "associated category fraction", "top ranked higher-level Science-Metrix category (field) for author", "associated category fraction", "rank of c within category sm-subfield-1", "rank of c (ns) within category sm-subfield-1", "total number of authors within category sm-subfield-1"]
 }
 
-# Create a button to trigger the pop-up
-if st.button("Show Table Information"):
-    with st.modal("Table Information"):
-        st.write("### Table Information")
-        st.dataframe(pd.DataFrame(table_data))
-
+# Create an expander to show the table information
+with st.expander("Show Table Information"):
+    st.write("### Table Information")
+    st.dataframe(pd.DataFrame(table_data))
 
 
 
